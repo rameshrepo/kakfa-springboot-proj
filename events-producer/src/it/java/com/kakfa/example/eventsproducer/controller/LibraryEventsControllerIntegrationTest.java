@@ -1,5 +1,7 @@
 package com.kakfa.example.eventsproducer.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kakfa.example.eventsproducer.domain.Book;
 import com.kakfa.example.eventsproducer.domain.LibraryEvent;
 import com.kakfa.example.eventsproducer.domain.LibraryEventType;
@@ -38,6 +40,9 @@ public class LibraryEventsControllerIntegrationTest {
     @Autowired
     private EmbeddedKafkaBroker embeddedKafkaBroker;
 
+    @Autowired
+    ObjectMapper objectMapper;
+
     private Consumer<Integer,String> consumer;
 
     @BeforeEach
@@ -65,12 +70,21 @@ public class LibraryEventsControllerIntegrationTest {
         assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
 
         ConsumerRecords<Integer, String> consumerRecords = KafkaTestUtils.getRecords(consumer);
-        //Thread.sleep(3000);
         assert consumerRecords.count() == 1;
-//        consumerRecords.forEach(record -> {
-//            var libraryEventActual = TestUtil.parseLibraryEventRecord(objectMapper, record.value());
-//            assertEquals(libraryEvent, libraryEventActual);
-//
-//        });
+        consumerRecords.forEach(record -> {
+            var libraryEventActual = parseLibraryEventRecord(objectMapper, record.value());
+            assertEquals(libraryEvent, libraryEventActual);
+
+        });
+    }
+
+    public static LibraryEvent parseLibraryEventRecord(ObjectMapper objectMapper , String json){
+
+        try {
+            return  objectMapper.readValue(json, LibraryEvent.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }
