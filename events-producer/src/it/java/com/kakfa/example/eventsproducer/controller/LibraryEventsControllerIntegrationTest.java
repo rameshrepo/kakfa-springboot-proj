@@ -66,7 +66,8 @@ public class LibraryEventsControllerIntegrationTest {
         httpHeaders.set("content-type", MediaType.APPLICATION_JSON.toString());
         HttpEntity<LibraryEvent> request = new HttpEntity<>(libraryEvent, httpHeaders);
 
-        ResponseEntity<LibraryEvent> responseEntity = testRestTemplate.exchange("/v1/libraryevent", HttpMethod.POST, request, LibraryEvent.class);
+        ResponseEntity<LibraryEvent> responseEntity = testRestTemplate.exchange("/v1/libraryevent",
+                HttpMethod.POST, request, LibraryEvent.class);
         assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
 
         ConsumerRecords<Integer, String> consumerRecords = KafkaTestUtils.getRecords(consumer);

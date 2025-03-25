@@ -6,7 +6,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.listener.AcknowledgingMessageListener;
 import org.springframework.kafka.support.Acknowledgment;
 
-//@Component
+//@Component // Example on how to do consume message with manual offset commit
 @Slf4j
 public class LibraryEventsConsumerManualOffset implements AcknowledgingMessageListener<Integer,String> {
 
